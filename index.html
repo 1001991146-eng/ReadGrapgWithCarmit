@@ -9,8 +9,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap');
         body { font-family: 'Assistant', sans-serif; background-color: #f0f4f8; }
-        .card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 1.5rem; }
+        .card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 1.5rem; position: relative; }
         .gradient-header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+        .source-tag { font-size: 0.7rem; color: #64748b; margin-top: 0.5rem; display: block; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -18,7 +19,7 @@
     <!-- Header -->
     <header class="gradient-header text-white p-6 rounded-2xl mb-8 shadow-lg text-center">
         <h1 class="text-3xl font-bold mb-2">מנתח נתוני תיירות: תיירות לשם הנאה מול עסקים</h1>
-        <p class="text-blue-100">יחידת הוראה: "אתגר המטבע הזר" - כיתה י"א</p>
+        <p class="text-blue-100">יחידת הוראה: "אתגר המטבע הזר" - מבוסס נתוני ישראל</p>
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -47,16 +48,17 @@
                 </div>
 
                 <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h3 class="font-bold text-blue-900 mb-2">נתוני יסוד (משרד התיירות):</h3>
+                    <h3 class="font-bold text-blue-900 mb-2">נתוני יסוד (ממוצע ימי בישראל):</h3>
                     <p class="text-sm">הוצאה יומית לשם הנאה: <b>$160</b></p>
                     <p class="text-sm">הוצאה יומית עסקים: <b>$480</b></p>
+                    <span class="source-tag">* מקור: דו"ח נכנסת, משרד התיירות (נתוני טרום-משבר)</span>
                 </div>
             </div>
 
             <div class="card bg-yellow-50 border-l-4 border-yellow-400">
                 <h3 class="font-bold text-yellow-800 mb-2">שאלה לדיון בכיתה:</h3>
                 <p class="text-sm text-yellow-900 italic" id="discussionQuestion">
-                    "שימו לב: אם נחתוך את כמות תיירי העסקים בחצי, כמה תיירים לשם הנאה נצטרך להביא כדי להשלים את החסר?"
+                    "לפי הנתונים, האם למדינת ישראל כדאי להשקיע בשיווק לקהל של משפחות או בשיווק כנסים רפואיים?"
                 </p>
             </div>
         </div>
@@ -70,6 +72,7 @@
                 <div class="h-64">
                     <canvas id="revenueChart"></canvas>
                 </div>
+                <span class="source-tag">עיבוד נתונים: מבוסס על יחס 1:3 ברווחיות (משרד התיירות)</span>
             </div>
 
             <!-- Stability/Seasonality Chart -->
@@ -78,7 +81,8 @@
                 <div class="h-64">
                     <canvas id="seasonalityChart"></canvas>
                 </div>
-                <p class="text-xs text-gray-500 mt-4">* תיירות עסקים מאופיינת ביציבות (קו ישר) לעומת תנודתיות גבוהה בתיירות לשם הנאה (עונתיות).</p>
+                <p class="text-xs text-gray-500 mt-4">* תיירות עסקים מאופיינת ביציבות לאורך כל חודשי השנה לעומת שיאי עונת הקיץ והחגים בתיירות הנאה.</p>
+                <span class="source-tag">מקור: הלשכה המרכזית לסטטיסטיקה (למ"ס), כניסות תיירים לפי חודש.</span>
             </div>
 
         </div>
@@ -87,12 +91,13 @@
     <!-- Summary Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
         <div class="card text-center border-t-4 border-blue-500">
-            <p class="text-gray-600">סך הכנסה יומית משוערת</p>
+            <p class="text-gray-600">סך הכנסה יומית למשק הישראלי</p>
             <h2 class="text-4xl font-bold text-blue-800" id="totalRevenueDisplay">$0</h2>
         </div>
         <div class="card text-center border-t-4 border-green-500">
-            <p class="text-gray-600">יחס רווחיות (תייר עסקים מול תייר לשם הנאה)</p>
-            <h2 class="text-4xl font-bold text-green-700">1 : 3</h2>
+            <p class="text-gray-600">יחס תרומה למט"ח</p>
+            <h2 class="text-4xl font-bold text-green-700">פי 3</h2>
+            <p class="text-xs mt-2 italic">מתייר עסקים אחד לעומת תייר לשם הנאה</p>
         </div>
     </div>
 
@@ -115,7 +120,7 @@
                 datasets: [{
                     label: 'הכנסה יומית ב-$',
                     data: [1000 * LEISURE_DAILY, 500 * BUSINESS_DAILY],
-                    backgroundColor: ['#93c5fd', '#1e40af'],
+                    backgroundColor: ['#94a3b8', '#1e3a8a'],
                     borderRadius: 8
                 }]
             },
@@ -135,16 +140,18 @@
                 labels: ['ינואר', 'מרץ', 'מאי', 'יולי', 'ספטמבר', 'נובמבר'],
                 datasets: [
                     {
-                        label: 'לשם הנאה (עונתי)',
-                        data: [20, 45, 60, 100, 55, 30],
-                        borderColor: '#f87171',
+                        label: 'לשם הנאה (עונתיות קיץ)',
+                        data: [15, 40, 55, 100, 60, 25],
+                        borderColor: '#94a3b8',
+                        borderDash: [5, 5],
                         tension: 0.4,
                         fill: false
                     },
                     {
-                        label: 'עסקים (יציב)',
-                        data: [75, 80, 78, 70, 82, 77],
-                        borderColor: '#1e40af',
+                        label: 'עסקים (יציבות שנתית)',
+                        data: [75, 78, 77, 72, 80, 76],
+                        borderColor: '#1e3a8a',
+                        borderWidth: 3,
                         tension: 0,
                         fill: false
                     }
@@ -177,7 +184,6 @@
         leisureInput.addEventListener('input', updateSimulation);
         businessInput.addEventListener('input', updateSimulation);
 
-        // Initial call
         updateSimulation();
     </script>
 </body>
